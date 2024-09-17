@@ -21,6 +21,7 @@ const title = document.querySelector("#title");
 const pages = document.querySelector("#pages");
 const isRead = document.querySelector("#isRead");
 const newBook = document.querySelector(".new-book");
+const status_dialog = document.querySelector("#select-status")
 
 const library = [
     {
@@ -57,47 +58,20 @@ function Book(title ="",author = "",pages =0,isRead=false) {
     this.pages = pages;
 }
 
-//Create a function that adds new books to the library
-function addNewBook() {
-    const book = new Book();
-    do{
-        //Accept user input and create a new book to store in an array.
-
-        let prop = prompt("Enter info:")
-        book[prop] = prop;
-    } while(book.author.length === 0 || book.title.length === 0 || book.pages > 0)
-     
-    library.push(book);
-}
-
 //Create an interface to show the contents of the array
 //Display the books on the page: table or cards
 function displayBooks() {
+    book_section.replaceChildren();
     library.forEach(book => {
-        /*    const {
-               title,
-               author,
-               pages,
-               isRead
-           } = book; */
+      
           const article = document.createElement("article");
+          const remove = document.createElement("button");
+          remove.textContent = "remove"
+          const changeStatus = document.createElement("button");
+          changeStatus.textContent = "change status"
+          article.setAttribute("data-key",library.indexOf(book))
           const properties = document.createElement("ul");
-       /*    const b_title = document.createElement("li");
-          const b_author = document.createElement("li");
-          const b_pages = document.createElement("li");
-          const b_isRead = document.createElement("li");
-          b_title.textContent = title;
-          b_author.textContent = author;
-          b_pages.textContent = pages;
-          b_isRead.textContent = isRead;
-          properties.appendChild(b_title)
-          properties.appendChild(b_author)
-          properties.appendChild(b_pages)
-          properties.appendChild(b_isRead)
-          article.appendChild(properties);
-          main.appendChild(article); */
-       
-          //try another method
+      
           for(let prop in book) {
            if(book.hasOwnProperty(prop)) {
            const b_prop = document.createElement("li");
@@ -105,53 +79,33 @@ function displayBooks() {
            properties.appendChild(b_prop);
            }
           }
+          properties.appendChild(remove);
+          properties.appendChild(changeStatus);
           article.appendChild(properties);
-          book_section.appendChild(article)
+          book_section.appendChild(article);
+
+          remove.addEventListener("click",(e) => {
+            let key = Number(e.target.parentElement.parentElement.getAttribute("data-key"));
+            library.splice(key,1);
+            displayBooks();
+    
+          })
+
+          changeStatus.addEventListener("click",(e) => {
+            let key = Number(e.target.parentElement.parentElement.getAttribute("data-key"));
+            library[key].isRead = library[key].isRead === false ? true : false;
+            displayBooks()
+          })
+
+         
+          
           
        })
+      
        
 
 }
-library.forEach(book => {
- /*    const {
-        title,
-        author,
-        pages,
-        isRead
-    } = book; */
-   const article = document.createElement("article");
-   const properties = document.createElement("ul");
-/*    const b_title = document.createElement("li");
-   const b_author = document.createElement("li");
-   const b_pages = document.createElement("li");
-   const b_isRead = document.createElement("li");
-   b_title.textContent = title;
-   b_author.textContent = author;
-   b_pages.textContent = pages;
-   b_isRead.textContent = isRead;
-   properties.appendChild(b_title)
-   properties.appendChild(b_author)
-   properties.appendChild(b_pages)
-   properties.appendChild(b_isRead)
-   article.appendChild(properties);
-   main.appendChild(article); */
-
-   //try another method
-   for(let prop in book) {
-    if(book.hasOwnProperty(prop)) {
-    const b_prop = document.createElement("li");
-    b_prop.textContent = book[prop];
-    properties.appendChild(b_prop);
-    }
-   }
-   article.appendChild(properties);
-   if(!Array.from(book_section.children).includes(article)) {
-    book_section.appendChild(article)
-   } else return;
-   
-
-})
-
+displayBooks()
 //Add a new book button that allows users to input details of new book in a form
 newBook.addEventListener("click",() => {
     dialog.showModal();
@@ -166,4 +120,9 @@ confirmBtn.addEventListener("click",(e) => {
     const book = new Book(title.value,author.value,pages.value,isRead.value);
     library.push(book);
     dialog.close(); 
+})
+
+cancelBtn.addEventListener("click",(e) => {
+    e.preventDefault();
+    dialog.close();
 })
