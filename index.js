@@ -174,6 +174,7 @@ cancelBtn.addEventListener("click",(e) => {
             this.newBook = this.main.querySelector(".new-book");
             this.status_dialog = this.main.querySelector("#select-status");
             this.removeButtons = this.main.querySelectorAll("article ul button:first-of-type")
+            this.changeStatusButtons  = this.main.querySelectorAll("article ul button:nth-of-type(2)");
             
         },
         render: function() {
