@@ -11,7 +11,7 @@
 //Add a button on each book's display to change the read status
 
 //Create an array to store books
-const main = document.querySelector(".main")
+/* const main = document.querySelector(".main")
 const book_section = document.querySelector(".books")
 const dialog = document.querySelector("#m-dialog");
 const confirmBtn = document.querySelector("#confirmBtn");
@@ -126,3 +126,149 @@ cancelBtn.addEventListener("click",(e) => {
     e.preventDefault();
     dialog.close();
 })
+ */
+(function() {
+    const Library = {
+        library: [
+            {
+                title : "harry pooter",
+                author: "micheal",
+                pages: 300,
+                isRead: false
+            },
+            {
+                title : "journey to the west",
+                author: "choas incarnate",
+                pages: 300,
+                isRead: false
+            }, 
+            {
+                title : "kunfu panda",
+                author: "void general",
+                pages: 300,
+                isRead: false
+            },
+            {
+                title : "diablo",
+                author: "fantastic",
+                pages: 300,
+                isRead: false
+            }
+        ],
+        init: function() {
+            this.cacheDom();
+            this.render();
+            this.bindEvents();
+    
+        },
+        cacheDom: function() {
+            this.main = document.querySelector(".main");
+            this.book_section = this.main.querySelector(".books");
+            this.dialog = this.main.querySelector("#m-dialog");
+            this.confirmBtn = this.main.querySelector("#confirmBtn");
+            this.cancelBtn = this.main.querySelector("#cancelBtn");
+            this.author = this.main.querySelector("#author");
+            this.title = this.main.querySelector("#title");
+            this.pages = this.main.querySelector("#pages");
+            this.isRead = this.main.querySelector("#isRead");
+            this.newBook = this.main.querySelector(".new-book");
+            this.status_dialog = this.main.querySelector("#select-status");
+            this.removeButtons = this.main.querySelectorAll("article ul button:first-of-type")
+            
+        },
+        render: function() {
+            this.book_section.replaceChildren();
+            this.library.forEach(book => {
+              
+                  const article = document.createElement("article");
+                  this.remove = document.createElement("button");
+                  this.remove.textContent = "remove"
+                  this.changeStatus = document.createElement("button");
+                  this.changeStatus.textContent = "change status"
+                  article.setAttribute("data-key",this.library.indexOf(book))
+                  const properties = document.createElement("ul");
+                  console.log(this.remove,this.changeStatus);
+              
+                  for(let prop in book) {
+                   if(book.hasOwnProperty(prop)) {
+                   const b_prop = document.createElement("li");
+                   b_prop.textContent = book[prop];
+                   properties.appendChild(b_prop);
+                   }
+                  }
+                  properties.appendChild(this.remove);
+                  properties.appendChild(this.changeStatus);
+                  article.appendChild(properties);
+                  this.book_section.appendChild(article);
+                })
+                console.log(this.main);
+                this.removeButtons = this.main.querySelectorAll("article ul button:first-of-type");
+                this.changeStatusButtons  = this.main.querySelectorAll("article ul button:nth-of-type(2)");
+            },
+         
+            bindEvents: function() {
+                this.newBook.addEventListener("click",this.addBook.bind(this))
+                
+                this.dialog.addEventListener("close",this.closeModal.bind(this))
+                
+                this.confirmBtn.addEventListener("click",this.confirm.bind(this))
+                
+                this.cancelBtn.addEventListener("click",this.cancel.bind(this))
+
+                this.removeButtons.forEach(button => {
+                    button.addEventListener("click",this.removeBook.bind(this))
+                })
+                
+                this.changeStatusButtons.forEach(button => {
+                    button.addEventListener("click",this.changeBookStatus.bind(this))
+                })
+
+            },
+            addBook: function() {
+                    console.log(this.newBook);
+                    this.dialog.showModal();
+            },
+            closeModal: function() {
+                this.render();
+            },
+            confirm: function(e) {
+                    e.preventDefault();
+                    const book = {
+                        title: this.title.value,
+                        author: this.author.value,
+                        pages: this.pages.value,
+                        isRead: this.isRead.value
+                    }
+                    this.library.push(book);
+                    this.dialog.close(); 
+            },
+            cancel: function(e) {
+                    e.preventDefault();
+                    this.dialog.close(); 
+            },
+            removeBook: function(e) {
+                    
+                    let key = Number(e.target.parentElement.parentElement.getAttribute("data-key"));
+                    console.log(key);
+                    this.library.splice(key,1);
+                    this.render();
+                    this.bindEvents();
+
+            
+            },
+            changeBookStatus: function(e) {
+            
+                    let key = Number(e.target.parentElement.parentElement.getAttribute("data-key"));
+                    this.library[key].isRead = this.library[key].isRead === false ? true : false;
+                    this.render();
+                    this.bindEvents();
+
+
+            }
+
+
+        }
+    
+    Library.init();
+
+})();
